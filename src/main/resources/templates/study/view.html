@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments :: head">
+	</head>
+<body>
+    <div th:replace="fragments :: main_nav"></div>
+	<div th:replace="fragments :: study-banner"></div>
+	
+	<div class="container">
+		<div th:replace="fragments :: study-info"></div>
+		<div th:replace="fragments :: study-menu('info')"></div>
+			
+	    <div class="row px-3 justify-content-center">
+	        <div class="col-10 pt-3" th:utext="${study.fullDescription}"></div>
+	    </div>
+		
+		
+		<div th:replace="fragments :: footer"></div>	
+	</div>
+	<div th:replace="fragments :: scripts"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+

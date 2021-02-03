@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+<!--     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	<style type="text/css">
+	body {
+		max-width: 100%;
+		padding: 0;
+		margin:0;
+	}
+	.dropdown-menu {
+		left: -35px;
+	}
+	
+	</style>
+    <title>Hello, world!</title>
+  </head>
+  <body>
+<div class="container">
+	<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" th:fragment="main_nav">
+		<a class="navbar-brand" th:href="@{/}" href="/">
+			<img src="/images/logo_sm.png" width="30" height="30">
+		</a>
+		<button class="navbar-toggler" type="button"
+			data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault"
+			aria-controls="navbarsExampleDefault" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<form th:action="@{/search/study}" class="form-inline" method="get">
+						<input class="form-control mr-sm-2" name="keyword" type="search" placeholder="스터디 찾기">
+					</form>
+				</li>
+			</ul>
+			<ul class="navbar-nav justify-content-end">
+				<li class="nav-item" sec:authorize="!isAuthenticated()">
+					<a class="nav-link" th:href="@{/login}">로그인</a>
+				</li>
+				<li class="nav-item" sec:authorize="!isAuthenticated()">
+					<a class="nav-link" th:href="@{/sign-up}">회원가입</a>
+				</li>
+				<li class="nav-item" sec:authorize="isAuthenticated()">
+					<a class="nav-link" th:href="@{/notifications}">
+                    	<i class="fa fa-bell-o" aria-hidden="true"></i>
+                    <span class="text-info" th:if="${hasNotification}"><i class="fa fa-bell" aria-hidden="true"></i></span>
+                </a>
+				</li>
+				<li class="nav-item" sec:authorize="isAuthenticated()">
+					<a class="nav-link btn btn-outline-primary" th:href="@{/new-study}">
+						<i class="fa fa-plus" aria-hidden="true">스터디 개설</i>
+					</a>
+				</li>
+				<li class="nav-item dropdown dropdown-menu-right me-2" sec:authorize="isAuthenticated()">
+					<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">
+						<svg th:if="${#strings.isEmpty(account?.profileImage)}" th:data-jdenticon-value="${#authentication.name}"
+                        	 width="24" height="24" class="rounded border bg-light"></svg>
+                    	<img th:if="${!#strings.isEmpty(account?.profileImage)}" th:src="${account.profileImage}"
+                         	width="24" height="24" class="rounded border"/>
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+					    <li>
+					    	<h6 class="dropdown-header">
+					    		<span sec:authentication="name">Username</span>
+					    	</h6>
+					    <li><a class="dropdown-item" href="#" th:href="@{'/profile/' + ${#authentication.name}}">프로필</a></li>
+					    <li><a class="dropdown-item" href="#">스터디</a></li>
+					    <li><hr class="dropdown-divider"></li>
+					    <li><a class="dropdown-item" href="#">설정</a></li>
+					    <li>
+		                    <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
+		                        <button class="dropdown-item" type="submit">로그아웃</button>
+		                    </form>
+					    </li>
+				    </ul>
+			    </li>
+			</ul>
+		</div>
+	</nav>
+</div>
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    	<script type="text/javascript">
+		$(function () {
+	    	$('[data-bs-toggle="tooltip"]').tooltip();
+		});
+	
+	
+	
+	</script>
+  </body>
+</html>
