@@ -46,7 +46,7 @@
 				</li>
 				<li class="nav-item" sec:authorize="isAuthenticated()">
 					<a class="nav-link" th:href="@{/notifications}">
-                    	<i class="fa fa-bell-o" aria-hidden="true"></i>
+                    	<i th:if="${!hasNotification}" class="fa fa-bell-o" aria-hidden="true"></i>
                    		<span class="text-info" th:if="${hasNotification}"><i class="fa fa-bell" aria-hidden="true"></i></span>
                 	</a>
 				</li>
@@ -112,7 +112,7 @@
 					<span th:if="${!study.published}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" title="스터디 공개 준비중">
 		            	<button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button">DRAFT</button>
 		            </span>
-		            <span th:if="${study.closed}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" title="스터디 종료함">
+		            <span th:  th:if="${study.closed}" class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" title="스터디 종료함">
 		                    <button class="btn btn-primary btn-sm" style="pointer-events: none;" type="button">CLOSED</button>
 		                </span>
 		            <span th:if="${!study.recruiting}" class="d-inline-block ml-1" tabindex="0" data-bs-toggle="tooltip" data-placement="bottom" title="팀원 모집중 아님">
