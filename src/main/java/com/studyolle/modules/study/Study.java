@@ -16,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
+import javax.persistence.SequenceGenerator;
 
 import com.studyolle.modules.account.Account;
 import com.studyolle.modules.account.UserAccount;
@@ -58,6 +59,12 @@ import lombok.Setter;
 @Builder @AllArgsConstructor @NoArgsConstructor
 public class Study {
 
+	
+	@SequenceGenerator(
+			name = "study_sequence",
+			sequenceName = "study_sequence",
+			allocationSize = 1
+	)
     @Id @GeneratedValue
     private Long id;
 
@@ -196,11 +203,13 @@ public class Study {
 	public void addMember(Account account) {
 		// TODO Auto-generated method stub
 		this.members.add(account);
+		this.memberCount++;
 	}
 
 	public void leaveMember(Account account) {
 		// TODO Auto-generated method stub
 		this.members.remove(account);
+		this.memberCount--;
 	}
 
 	public boolean isManagerOf(Account account) {

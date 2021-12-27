@@ -5,7 +5,7 @@
 	</head>
 <body>
     <div th:replace="fragments :: main_nav"></div>
-    <section class="jumbotron text-center">
+    <section class="jumbotron text-center" sec:authorize="!isAuthenticated()">
     	<div class="container">
     		<h1>스터디올래</h1>
             <p class="lead text-muted">
@@ -18,7 +18,125 @@
 			</div>
     	</div>
     </section>
+    <div class="row justify-content-center" sec:authorize="!isAuthenticated()">
+	    <div class="col-sm-10">
+	    	<div class="row">
+		        <div class="col-md-4" th:each="study: ${studyPage}">
+		            <div class="card mb-4 shadow-sm">
+		                <img th:src="${study.image}" class="card-img-top" th:alt="${study.title}" >
+		                <div class="card-body">
+		                    <a th:href="@{'/study/' + ${study.path}}" class="text-decoration-none">
+		                        <h5 class="card-title context" th:text="${study.title}"></h5>
+		                    </a>
+		                    <p class="card-text" th:text="${study.shortDescription}">Short description</p>
+		                    <p class="card-text context">
+		                                <span th:each="tag: ${study.tags}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+		                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+		                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+		                                    </a>
+		                                </span>
+		                        <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+		                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+		                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+		                                    </a>
+		                                </span>
+		                    </p>
+		                    <div class="d-flex justify-content-between align-items-center">
+		                        <small class="text-muted">
+		                            <i class="fa fa-user-circle"></i>
+		                            <span th:text="${study.memberCount}"></span>명
+		                        </small>
+		                        <small class="text-muted date" th:text="${study.publishedDateTime}">9 mins</small>
+		                    </div>
+		                </div>
+		            </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="container" sec:authorize="isAuthenticated()">
+		<div class="row px-3">
+			<div class="col-sm-2">
+				관심 스터디 주제
+				<div class="card">
+					<ul class="list-group list-group-flush" th:each=" tag : ${tags}">
+						<li class="list-group-item fa fa-tag" th:text="${tag.title}">spring</li>
+					</ul>
+				</div>
+				주요 활동 지역
+				<div class="card">
+					<ul class="list-group list-group-flush" th:each=" zone : ${zones}">
+						<li class="list-group-item fa fa-globe" th:text=" ${ zone.localNameOfCity} ">spring</li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				참석할 모임
+		    	<div class="row">
+			        <div class="col-md-6" th:each="event : ${enrollEvent}">
+			            <div class="card mb-4 shadow-sm">
+			                <div class="card-body">
+			                    <a th:href="@{'/study/' + ${event.study.path} + '/events/' + ${event.id} }" class="text-decoration-none">
+			                        <h5 class="card-title context" th:text="${event.title}"></h5>
+			                    </a>
+			                    <p class="card-text" th:text="${event.description.replace( '<p>', ' ').replace( '</p>', ' ')} ">
+			                    	description
+			                    </p>
+                               	<p class="card-text weekday-time fa fa-calendar" th:text="${event.startDateTime}">시간</p>
+                               	<div class="card-text">
+		                            <span>
+		                            	<a th:href="@{'/study/' + ${event.study.path} + '/events/' + ${event.id} }" class="text-decoration-none">모임조회</a>
+		                            </span>
+		                            <span>
+		                            	<a th:href="@{'/study/' + ${event.study.path} }" class="text-decoration-none">스터디 조회</a>
+		                            </span>
+	                            </div>
+			                </div>
+			            </div>
+		            </div>
+		        </div>
+		        <div class="row">
+			        <div class="col-md-4" th:each="study: ${studyPage}">
+			            <div class="card mb-4 shadow-sm">
+			                <img th:src="${study.image}" class="card-img-top" th:alt="${study.title}" >
+			                <div class="card-body">
+			                    <a th:href="@{'/study/' + ${study.path}}" class="text-decoration-none">
+			                        <h5 class="card-title context" th:text="${study.title}"></h5>
+			                    </a>
+			                    <p class="card-text" th:text="${study.shortDescription}">Short description</p>
+			                    <p class="card-text context">
+			                                <span th:each="tag: ${study.tags}" class="font-weight-light text-monospace badge badge-pill badge-info mr-3">
+			                                    <a th:href="@{'/search/tag/' + ${tag.title}}" class="text-decoration-none text-white">
+			                                        <i class="fa fa-tag"></i> <span th:text="${tag.title}">Tag</span>
+			                                    </a>
+			                                </span>
+			                        <span th:each="zone: ${study.zones}" class="font-weight-light text-monospace badge badge-primary mr-3">
+			                                    <a th:href="@{'/search/zone/' + ${zone.id}}" class="text-decoration-none text-white">
+			                                        <i class="fa fa-globe"></i> <span th:text="${zone.localNameOfCity}" class="text-white">City</span>
+			                                    </a>
+			                                </span>
+			                    </p>
+			                    <div class="d-flex justify-content-between align-items-center">
+			                        <small class="text-muted">
+			                            <i class="fa fa-user-circle"></i>
+			                            <span th:text="${study.memberCount}"></span>명
+			                        </small>
+			                        <small class="text-muted date" th:text="${study.publishedDateTime}">9 mins</small>
+			                    </div>
+			                </div>
+			            </div>
+		            </div>
+	            </div>
+		    </div>
+		</div>
+	</div>
+
+
+
+
+
 	<div th:replace="fragments :: footer"></div>
 	<div th:replace="fragments :: scripts"></div>
+	<div th:replace="fragments :: date-time"></div>
 </body>
 </html>

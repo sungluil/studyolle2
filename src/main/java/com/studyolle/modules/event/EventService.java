@@ -3,12 +3,14 @@ package com.studyolle.modules.event;
 import java.time.LocalDateTime;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.studyolle.modules.account.Account;
 import com.studyolle.modules.event.form.EventForm;
 import com.studyolle.modules.study.Study;
+import com.studyolle.modules.study.event.StudyUpdateEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +22,14 @@ public class EventService {
 	private final EventRepository eventRepository;
 	private final ModelMapper modelMapper;
 	private final EnrollmentRepository enrollmentRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	
 	public Event createNewEvent(Event event, Study study, Account account) {
 		event.setCreatedBy(account);
 		event.setCreatedDateTime(LocalDateTime.now());
 		event.setStudy(study);
+		eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), event.getTitle()+" 모임을 만들었습니다."));
 		eventRepository.save(event);
 		return event;
 	}
@@ -43,6 +47,7 @@ public class EventService {
 //		event.setEndDateTime(eventForm.getEndDateTime());
 //		event.setDescription(eventForm.getDescription());
 //		eventRepository.save(event);
+		eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), event.getTitle()+" 모임 정보를 수정했습니다. 확인해주세요."));
 		return event;
 	}
 
@@ -50,6 +55,7 @@ public class EventService {
 	public void deleteEvent(Event event) {
 		// TODO Auto-generated method stub
 		eventRepository.delete(event);
+		eventPublisher.publishEvent(new StudyUpdateEvent(event.getStudy(), event.getTitle()+" 모임을 취소했습니다."));
 	}
 
 
@@ -64,6 +70,7 @@ public class EventService {
 			enrollment.setEvent(event);
 			event.addEnrollments(enrollment);
 			enrollmentRepository.save(enrollment);
+			eventPublisher.publishEvent(new EnrollmentAcceptedEvent(enrollment));
 		}
 	}
 
@@ -71,6 +78,7 @@ public class EventService {
 	public void cancleEnroll(Account account, Event event) {
 		// TODO Auto-generated method stub
 		Enrollment enrollment = enrollmentRepository.findByEventAndAccount(event,account);
+		eventPublisher.publishEvent(new EnrollmentCancleEvent(enrollment));
 		event.removeEnrollment(enrollment);
 		enrollmentRepository.delete(enrollment);
 		
@@ -78,6 +86,7 @@ public class EventService {
 			Enrollment enrollmentToAccept = event.getFirstWaitingEnrollment();
 			if(enrollmentToAccept != null) {
 				enrollmentToAccept.setAccepted(true);
+				eventPublisher.publishEvent(new EnrollmentAcceptedEvent(enrollment));
 			}
 		}
 	}
@@ -87,6 +96,7 @@ public class EventService {
 		// TODO Auto-generated method stub
 		if(event.isAbleToAcceptWaitingEnrollment2()) {
 			enrollment.setAccepted(true);
+			eventPublisher.publishEvent(new EnrollmentAcceptedEvent(enrollment));
 		}
 	}
 
@@ -95,6 +105,7 @@ public class EventService {
 		// TODO Auto-generated method stub
 		if(event.isAbleToAcceptWaitingEnrollment2()) {
 			enrollment.setAccepted(false);
+			eventPublisher.publishEvent(new EnrollmentRejectedEvent(enrollment));
 		}
 	}
 
@@ -109,4 +120,5 @@ public class EventService {
 		// TODO Auto-generated method stub
 		enrollment.setAttended(false);
 	}
+	
 }

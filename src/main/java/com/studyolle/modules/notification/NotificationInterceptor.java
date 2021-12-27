@@ -27,13 +27,13 @@ public class NotificationInterceptor implements HandlerInterceptor{
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		// TODO Auto-generated method stub
-		System.out.println("실행됨===============================================");
+		//System.out.println("실행됨===============================================");
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
 		if(modelAndView != null && !isRedirectView(modelAndView) && authentication != null && authentication.getPrincipal() instanceof UserAccount) {
 			Account account = ((UserAccount) authentication.getPrincipal()).getAccount();
 			Long count = notificationRepository.countByAccountAndChecked(account, false);
-			System.out.println("갯수는 "+count);
+			//System.out.println("갯수는 "+count);
 			modelAndView.addObject("hasNotification", count>0);
 		}
 

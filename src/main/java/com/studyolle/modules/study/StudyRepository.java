@@ -1,5 +1,7 @@
 package com.studyolle.modules.study;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.studyolle.modules.account.Account;
 
 @Transactional(readOnly = true)
-public interface StudyRepository extends JpaRepository<Study, Long> {
+public interface StudyRepository extends JpaRepository<Study, Long>
+, StudyRepositoryExtension{
 
 	boolean existsByPath(String path);
 
@@ -28,5 +31,11 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
 	@EntityGraph(value = "Study.withTagsAndZones", type = EntityGraph.EntityGraphType.FETCH)
 	Study findStudyWithTagsAndZonesById(Long id);
+
+	@EntityGraph(attributePaths = {"members","managers"})//기본이 패치
+	Study findStudyWithManagersAndMembersById(Long id);
+	
+	List<Study> findFirst9ByPublishedAndClosedOrderByPublishedDateTimeDesc(boolean publided, boolean close);
+		
 
 }

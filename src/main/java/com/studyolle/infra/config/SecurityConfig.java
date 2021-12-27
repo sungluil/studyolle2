@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		http.authorizeRequests()
 				.mvcMatchers("/","/login","/sign-up","/check-email-token",
 						"/email-login","/check-email-login","/login-link","/login-link"
-						,"/login-email-token").permitAll()
+						,"/login-email-token","/search/study").permitAll()
 				.mvcMatchers(HttpMethod.GET,"/profile/*").permitAll()
 				.anyRequest().authenticated();
 		

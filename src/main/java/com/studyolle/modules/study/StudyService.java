@@ -1,5 +1,7 @@
 package com.studyolle.modules.study;
 
+import java.util.HashSet;
+
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -12,11 +14,14 @@ import com.studyolle.modules.account.Account;
 import com.studyolle.modules.account.UserAccount;
 import com.studyolle.modules.event.Event;
 import com.studyolle.modules.study.event.StudyCreatedEvents;
+import com.studyolle.modules.study.event.StudyUpdateEvent;
 import com.studyolle.modules.study.form.StudyDescriptionForm;
 import com.studyolle.modules.tag.Tag;
+import com.studyolle.modules.tag.TagRepository;
 import com.studyolle.modules.zone.Zone;
 
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 
 @Service
 @Transactional
@@ -26,6 +31,7 @@ public class StudyService {
 	private final StudyRepository repository;
 	private final ModelMapper modelMapper;
 	private final ApplicationEventPublisher eventPublisher;
+	private final TagRepository tagRepository;
 	
 
     public Study createNewStudy(Study study, Account account) {
@@ -75,6 +81,8 @@ public class StudyService {
 
 	public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) {
 		modelMapper.map(studyDescriptionForm, study);
+		//알람 이벤트
+		this.eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디 소개를 수정했습니다."));
 		
 	}
 
@@ -140,18 +148,25 @@ public class StudyService {
 	}
 	public void close(Study study) {
 		study.close();
-		
+		//알람 이벤트
+		this.eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디를 종료했습니다."));
+				
 	}
 
 
 	public void startRecruit(Study study) {
 		// TODO Auto-generated method stub
 		study.startRecruit();
+		//알람 이벤트
+		this.eventPublisher.publishEvent(new StudyUpdateEvent(study,"팀원 모집을 시작했습니다."));
+				
 	}
 
 
 	public void stopRecruit(Study study) {
 		study.stopRecruit();
+		//알람 이벤트
+		this.eventPublisher.publishEvent(new StudyUpdateEvent(study,"팀원 모집을 중단했습니다."));
 		
 	}
 
@@ -193,6 +208,26 @@ public class StudyService {
 		Study study = repository.findStudyOnlyByPath(path);
 		checkIfExistingStudy(path, study);
 		return study;
+	}
+
+
+	public void generatedStudy(Account account) {
+		// TODO Auto-generated method stub
+		for(int i = 0 ; i < 50 ; i++) {
+			String random = RandomString.make(5);
+			Study study =Study.builder()
+				.title("테스트 데이터" + random)
+				.path("test-" + random)
+				.shortDescription("테스트용 스터디 입니다.")
+				.fullDescription("test")
+				.tags(new HashSet<>())
+				.managers(new HashSet<>())
+				.build();
+			study.publish();
+			Study newStudy =  this.createNewStudy(study, account);
+			Tag jpa =  tagRepository.findByTitle("spring");
+			newStudy.getTags().add(jpa);
+		}
 	}
 
 

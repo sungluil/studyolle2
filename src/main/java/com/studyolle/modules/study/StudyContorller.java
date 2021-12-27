@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.studyolle.modules.account.Account;
 import com.studyolle.modules.account.CurrentUser;
 import com.studyolle.modules.account.UserAccount;
+import com.studyolle.modules.notification.Notification;
+import com.studyolle.modules.notification.NotificationRepository;
+import com.studyolle.modules.notification.NotificationService;
 import com.studyolle.modules.study.form.StudyForm;
 import com.studyolle.modules.study.validator.StudyFormValidator;
 
@@ -32,6 +35,8 @@ public class StudyContorller {
 	private final ModelMapper modelMapper; 
 	private final StudyFormValidator studyFormValidator; 
 	private final StudyRepository studyRepository;  
+	private final NotificationRepository notificationRepository; 
+	private final NotificationService notificationService;
 	
 	@InitBinder("studyForm")
 	public void studyFormInitBinder(WebDataBinder webDataBinder) {
@@ -78,10 +83,25 @@ public class StudyContorller {
 //		}
 		
 		Study study = studyService.getStudy(path);
+		//String notiPath = "/study/"+path;
+		//Notification notification = notificationRepository.findByLink(notiPath);
+		//notificationService.check(notification);
 		model.addAttribute(account);
 		model.addAttribute(study);
 		return "study/view";
 	}
+	
+//	@GetMapping("/study/{path}/true")
+//	public String viewTrueStudy(@CurrentUser Account account ,@PathVariable String path, Model model) {
+//		
+//		Study study = studyService.getStudy(path);
+//		String notiPath = "/study/"+path;
+//		Notification notification = notificationRepository.findByLink(notiPath);
+//		notificationService.check(notification);
+//		model.addAttribute(account);
+//		model.addAttribute(study);
+//		return "study/view";
+//	}
 	
 	@GetMapping("/study/{path}/members")
 	public String viewStudyMembers(@CurrentUser Account account, @PathVariable String path, Model model) {
@@ -120,6 +140,13 @@ public class StudyContorller {
 	@GetMapping("/test")
 	public String test(@CurrentUser Account account) {
 		return "study/test";
+	}
+	
+	
+	@GetMapping("/study/data")
+	public String testData(@CurrentUser Account account) {
+		studyService.generatedStudy(account);
+		return "redirect:/";
 	}
 }
 
